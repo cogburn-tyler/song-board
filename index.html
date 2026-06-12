@@ -1218,10 +1218,9 @@ async function submitLanding() {
   }
 
   const entry = { name, song, artist, genre, dept, bpm, previewUrl };
+  entries.push(entry); // always add locally so showBoard() can create the ball immediately
   if (window._fbDb) {
     window._fbDb.ref('entries').push(entry);
-  } else {
-    entries.push(entry);
   }
   showBoard();
   if (bpm) toast(`♪ ${Math.round(bpm)} BPM detected`);
@@ -1255,15 +1254,13 @@ async function submitModal() {
   }
 
   const entry = { name, song, artist, genre, dept, bpm, previewUrl };
+  entries.push(entry);
+  balls.push(new Ball(entry));
+  updateChart();
+  const n = entries.length;
+  document.getElementById('count-label').textContent = `${n} ${n === 1 ? 'song' : 'songs'}`;
   if (window._fbDb) {
     window._fbDb.ref('entries').push(entry);
-    // Real-time listener will add ball + update chart
-  } else {
-    entries.push(entry);
-    balls.push(new Ball(entry));
-    updateChart();
-    const n = entries.length;
-    document.getElementById('count-label').textContent = `${n} songs`;
   }
   ['m-name','m-song','m-artist'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('m-dept').value = '';
